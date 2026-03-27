@@ -3,6 +3,12 @@ import { getProjectById, getProjects, saveProject } from "./lib/supabase";
 import type { ChangeEvent, DragEvent } from "react";
 import type { LyricsVideoProject, RecognizedTrack } from "./types/project";
 
+type SyncedLyricLine = {
+  key: string;
+  time: number;
+  text: string;
+};
+
 const defaultProject: LyricsVideoProject = {
   title: "",
   artist: "",
@@ -30,6 +36,55 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
+function parseSyncedLyrics(lyrics: string): SyncedLyricLine[] {
+  const parsed: SyncedLyricLine[] = [];
+  const lines = lyrics.split(/\r?\n/);
+
+  lines.forEach((line, lineIndex) => {
+    const matches = [...line.matchAll(/\[(\d{1,2}):([0-5]\d)(?:[.:](\d{1,3}))?\]/g)];
+    if (matches.length === 0) {
+      return;
+    }
+
+    const text = line.replace(/\[(\d{1,2}):([0-5]\d)(?:[.:](\d{1,3}))?\]/g, "").trim() || "♪";
+    matches.forEach((match, matchIndex) => {
+      const minuteText = match[1] ?? "0";
+      const secondText = match[2] ?? "0";
+      const fractionText = match[3] ?? "0";
+
+      const minutes = Number(minuteText);
+      const seconds = Number(secondText);
+      const fractionDivisor =
+        fractionText.length === 3 ? 1000 : fractionText.length === 2 ? 100 : 10;
+      const fraction = Number(fractionText) / fractionDivisor;
+      const timestamp = minutes * 60 + seconds + fraction;
+
+      parsed.push({
+        key: `${lineIndex}-${matchIndex}-${timestamp}`,
+        time: timestamp,
+        text,
+      });
+    });
+  });
+
+  return parsed.sort((a, b) => a.time - b.time);
+}
+
+function formatPreviewTime(seconds: number): string {
+  const safeSeconds = Math.max(0, seconds);
+  const minutes = Math.floor(safeSeconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const wholeSeconds = Math.floor(safeSeconds % 60)
+    .toString()
+    .padStart(2, "0");
+  const centiseconds = Math.floor((safeSeconds - Math.floor(safeSeconds)) * 100)
+    .toString()
+    .padStart(2, "0");
+
+  return `${minutes}:${wholeSeconds}.${centiseconds}`;
+}
+
 export default function App() {
   const [project, setProject] = useState<LyricsVideoProject>(createInitialProject);
   const [projectIdInput, setProjectIdInput] = useState("");
@@ -40,8 +95,29 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshingList, setIsRefreshingList] = useState(false);
+  const [previewTime, setPreviewTime] = useState(0);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
   const [status, setStatus] = useState<string>("프로젝트를 시작해보세요.");
   const [error, setError] = useState<string | null>(null);
+
+  const syncedLyrics = useMemo(() => parseSyncedLyrics(project.lyrics), [project.lyrics]);
+  const previewDuration = useMemo(() => {
+    if (syncedLyrics.length === 0) {
+      return 0;
+    }
+    return syncedLyrics[syncedLyrics.length - 1].time + 3;
+  }, [syncedLyrics]);
+  const activeLyricIndex = useMemo(() => {
+    let currentIndex = -1;
+    for (let index = 0; index < syncedLyrics.length; index += 1) {
+      if (syncedLyrics[index].time <= previewTime) {
+        currentIndex = index;
+      } else {
+        break;
+      }
+    }
+    return currentIndex;
+  }, [previewTime, syncedLyrics]);
 
   const canSave = useMemo(
     () => Boolean(project.title.trim() && project.artist.trim()),
@@ -200,10 +276,63 @@ export default function App() {
     void refreshProjects();
   }, []);
 
+  useEffect(() => {
+    if (syncedLyrics.length === 0) {
+      setPreviewTime(0);
+      setIsPreviewPlaying(false);
+      return;
+    }
+
+    setPreviewTime((prev) => Math.min(prev, previewDuration));
+  }, [previewDuration, syncedLyrics.length]);
+
+  useEffect(() => {
+    if (!isPreviewPlaying) {
+      return;
+    }
+
+    const timerId = window.setInterval(() => {
+      setPreviewTime((prev) => prev + 0.1);
+    }, 100);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [isPreviewPlaying]);
+
+  useEffect(() => {
+    if (previewDuration <= 0) {
+      return;
+    }
+    if (previewTime >= previewDuration) {
+      setPreviewTime(previewDuration);
+      setIsPreviewPlaying(false);
+    }
+  }, [previewDuration, previewTime]);
+
   const handleLoadFromList = (selected: LyricsVideoProject) => {
     setProject(selected);
     setProjectIdInput(selected.id ?? "");
+    setPreviewTime(0);
+    setIsPreviewPlaying(false);
     setStatus(`불러오기 완료: ${selected.title}`);
+  };
+
+  const togglePreviewPlayback = () => {
+    if (syncedLyrics.length === 0) {
+      return;
+    }
+    setIsPreviewPlaying((prev) => !prev);
+  };
+
+  const resetPreview = () => {
+    setPreviewTime(0);
+    setIsPreviewPlaying(false);
+  };
+
+  const onPreviewSeek = (event: ChangeEvent<HTMLInputElement>) => {
+    setPreviewTime(Number(event.target.value));
+    setIsPreviewPlaying(false);
   };
 
   return (
@@ -253,7 +382,7 @@ export default function App() {
           <textarea
             value={project.lyrics}
             onChange={onFieldChange("lyrics")}
-            placeholder="가사를 입력하세요"
+            placeholder="가사를 입력하세요 (예: [00:12.50] 첫 줄 가사)"
             rows={8}
           />
         </label>
@@ -297,6 +426,53 @@ export default function App() {
             ))
           )}
         </div>
+      </section>
+
+      <section className="card">
+        <h2>4) 가사 싱크 미리보기</h2>
+        <p className="sync-hint">
+          LRC 형식 타임코드(`[mm:ss.xx]`)를 가사에 포함하면 재생 시간에 맞춰 현재 줄을 확인할 수
+          있습니다.
+        </p>
+        {syncedLyrics.length === 0 ? (
+          <p className="empty-list">
+            타임코드 가사가 없습니다. 예시: [00:05.20] 안녕, 첫 줄 가사
+          </p>
+        ) : (
+          <>
+            <div className="sync-controls">
+              <button onClick={togglePreviewPlayback} type="button">
+                {isPreviewPlaying ? "일시정지" : "재생"}
+              </button>
+              <button className="secondary-button" onClick={resetPreview} type="button">
+                처음으로
+              </button>
+              <span className="sync-time">
+                {formatPreviewTime(previewTime)} / {formatPreviewTime(previewDuration)}
+              </span>
+            </div>
+            <input
+              className="sync-range"
+              type="range"
+              min={0}
+              max={Math.max(previewDuration, 1)}
+              step={0.1}
+              value={Math.min(previewTime, Math.max(previewDuration, 1))}
+              onChange={onPreviewSeek}
+            />
+            <ul className="sync-lines">
+              {syncedLyrics.map((line, index) => (
+                <li
+                  key={line.key}
+                  className={`sync-line ${index === activeLyricIndex ? "active" : ""}`}
+                >
+                  <span className="sync-line-time">{formatPreviewTime(line.time)}</span>
+                  <span>{line.text}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </section>
 
       <footer className="status-area">

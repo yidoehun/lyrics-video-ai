@@ -142,6 +142,68 @@ button:disabled {
   color: #2563eb;
 }
 
+.sync-hint {
+  margin: 0 0 12px;
+  color: #4b5563;
+  font-size: 0.92rem;
+}
+
+.sync-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.secondary-button {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.sync-time {
+  font-size: 0.9rem;
+  color: #374151;
+  font-variant-numeric: tabular-nums;
+}
+
+.sync-range {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.sync-lines {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.sync-line {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  background: #f9fafb;
+}
+
+.sync-line.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.sync-line-time {
+  font-variant-numeric: tabular-nums;
+  color: #6b7280;
+}
+
 .project-list {
   margin-top: 14px;
   display: grid;
