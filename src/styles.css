@@ -1,189 +1,313 @@
 :root {
-  color-scheme: light;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
-}
+    color-scheme: light;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.5;
+        }
 
-* {
-  box-sizing: border-box;
-}
+        * { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  background: #f3f4f6;
-  color: #111827;
-}
+        body {
+          margin: 0;
+            background: #f3f4f6;
+              color: #111827;
+              }
 
-.container {
-  min-height: 100vh;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 32px 20px 64px;
-}
+              .container {
+                min-height: 100vh;
+                  max-width: 960px;
+                    margin: 0 auto;
+                      padding: 32px 20px 64px;
+                      }
 
-header h1 {
-  margin: 0 0 8px;
-  font-size: 2rem;
-}
+                      header h1 { margin: 0 0 8px; font-size: 2rem; }
+                      header p { margin: 0; color: #4b5563; }
 
-header p {
-  margin: 0;
-  color: #4b5563;
-}
+                      .card {
+                        margin-top: 20px;
+                          padding: 20px;
+                            border: 1px solid #d1d5db;
+                              border-radius: 14px;
+                                background: #ffffff;
+                                  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+                                  }
+                                  .card h2 { margin: 0 0 12px; }
 
-.card {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #d1d5db;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
+                                  .dropzone {
+                                    border: 2px dashed #9ca3af;
+                                      border-radius: 12px;
+                                        padding: 24px;
+                                          text-align: center;
+                                            background: #f9fafb;
+                                              transition: all 0.2s ease;
+                                              }
+                                              .dropzone.active {
+                                                border-color: #2563eb;
+                                                  background: #eff6ff;
+                                                  }
 
-.card h2 {
-  margin: 0 0 12px;
-}
+                                                  .file-button {
+                                                    display: inline-flex;
+                                                      align-items: center;
+                                                        justify-content: center;
+                                                          margin-top: 10px;
+                                                            padding: 8px 14px;
+                                                              border-radius: 8px;
+                                                                border: 1px solid #2563eb;
+                                                                  color: #2563eb;
+                                                                    font-weight: 600;
+                                                                      cursor: pointer;
+                                                                      }
+                                                                      .file-button input { display: none; }
 
-.dropzone {
-  border: 2px dashed #9ca3af;
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  background: #f9fafb;
-  transition: all 0.2s ease;
-}
+                                                                      .form-grid {
+                                                                        display: grid;
+                                                                          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                                                                            gap: 14px;
+                                                                            }
+                                                                            .form-grid h2,
+                                                                            .form-grid .full { grid-column: 1 / -1; }
 
-.dropzone.active {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
+                                                                            label {
+                                                                              display: flex;
+                                                                                flex-direction: column;
+                                                                                  gap: 6px;
+                                                                                    font-size: 0.9rem;
+                                                                                      color: #4b5563;
+                                                                                      }
 
-.file-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid #2563eb;
-  color: #2563eb;
-  font-weight: 600;
-  cursor: pointer;
-}
+                                                                                      input[type="text"],
+                                                                                      textarea,
+                                                                                      select {
+                                                                                        border: 1px solid #d1d5db;
+                                                                                          border-radius: 10px;
+                                                                                            padding: 10px 12px;
+                                                                                              font-size: 0.95rem;
+                                                                                                color: #111827;
+                                                                                                  background: #ffffff;
+                                                                                                  }
+                                                                                                  textarea { resize: vertical; }
 
-.file-button input {
-  display: none;
-}
+                                                                                                  .lyrics-actions { display: flex; gap: 10px; margin-top: 8px; }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-}
+                                                                                                  .style-grid {
+                                                                                                    display: grid;
+                                                                                                      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                                                                                                        gap: 16px;
+                                                                                                          margin-bottom: 20px;
+                                                                                                          }
+                                                                                                          .color-input-wrap {
+                                                                                                            display: flex;
+                                                                                                              align-items: center;
+                                                                                                                gap: 8px;
+                                                                                                                }
+                                                                                                                .color-input-wrap input[type="color"] {
+                                                                                                                  width: 44px;
+                                                                                                                    height: 44px;
+                                                                                                                      padding: 2px;
+                                                                                                                        border-radius: 8px;
+                                                                                                                          cursor: pointer;
+                                                                                                                            border: 1px solid #d1d5db;
+                                                                                                                            }
+                                                                                                                            .color-input-wrap input[type="text"] {
+                                                                                                                              flex: 1;
+                                                                                                                                border: 1px solid #d1d5db;
+                                                                                                                                  border-radius: 10px;
+                                                                                                                                    padding: 10px 12px;
+                                                                                                                                      font-size: 0.95rem;
+                                                                                                                                        color: #111827;
+                                                                                                                                          background: #ffffff;
+                                                                                                                                          }
+                                                                                                                                          input[type="range"] {
+                                                                                                                                            width: 100%;
+                                                                                                                                              margin-top: 4px;
+                                                                                                                                                accent-color: #2563eb;
+                                                                                                                                                }
 
-.form-grid h2,
-.form-grid .full {
-  grid-column: 1 / -1;
-}
+                                                                                                                                                .mini-preview {
+                                                                                                                                                  margin-top: 16px;
+                                                                                                                                                    border-radius: 12px;
+                                                                                                                                                      padding: 32px 20px;
+                                                                                                                                                        text-align: center;
+                                                                                                                                                          min-height: 100px;
+                                                                                                                                                            display: flex;
+                                                                                                                                                              align-items: center;
+                                                                                                                                                                justify-content: center;
+                                                                                                                                                                  border: 2px solid #e5e7eb;
+                                                                                                                                                                  }
+                                                                                                                                                                  .mini-preview p {
+                                                                                                                                                                    margin: 0;
+                                                                                                                                                                      font-weight: 700;
+                                                                                                                                                                        letter-spacing: 0.02em;
+                                                                                                                                                                          word-break: keep-all;
+                                                                                                                                                                          }
 
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.9rem;
-  color: #4b5563;
-}
+                                                                                                                                                                          .preview-launch {
+                                                                                                                                                                            display: flex;
+                                                                                                                                                                              align-items: center;
+                                                                                                                                                                                gap: 12px;
+                                                                                                                                                                                  margin-bottom: 16px;
+                                                                                                                                                                                  }
+                                                                                                                                                                                  .preview-launch small { color: #9ca3af; }
 
-input,
-textarea,
-select {
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 0.95rem;
-  color: #111827;
-  background: #ffffff;
-}
+                                                                                                                                                                                  button {
+                                                                                                                                                                                    border: none;
+                                                                                                                                                                                      border-radius: 10px;
+                                                                                                                                                                                        padding: 10px 16px;
+                                                                                                                                                                                          font-weight: 600;
+                                                                                                                                                                                            cursor: pointer;
+                                                                                                                                                                                              background: #2563eb;
+                                                                                                                                                                                                color: #ffffff;
+                                                                                                                                                                                                  transition: opacity 0.15s;
+                                                                                                                                                                                                  }
+                                                                                                                                                                                                  button:disabled {
+                                                                                                                                                                                                    cursor: not-allowed;
+                                                                                                                                                                                                      opacity: 0.6;
+                                                                                                                                                                                                      }
+                                                                                                                                                                                                      .secondary-btn {
+                                                                                                                                                                                                        background: #f3f4f6;
+                                                                                                                                                                                                          color: #374151;
+                                                                                                                                                                                                            border: 1px solid #d1d5db;
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                            .preview-btn {
+                                                                                                                                                                                                              background: #111827;
+                                                                                                                                                                                                                color: #ffffff;
+                                                                                                                                                                                                                  font-size: 1rem;
+                                                                                                                                                                                                                    padding: 12px 24px;
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                    .play-btn {
+                                                                                                                                                                                                                      background: rgba(255,255,255,0.15);
+                                                                                                                                                                                                                        border: 1px solid rgba(255,255,255,0.4);
+                                                                                                                                                                                                                          font-size: 0.95rem;
+                                                                                                                                                                                                                            color: #ffffff;
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                            .exit-btn {
+                                                                                                                                                                                                                              background: transparent;
+                                                                                                                                                                                                                                border: 1px solid rgba(255,255,255,0.3);
+                                                                                                                                                                                                                                  font-size: 0.9rem;
+                                                                                                                                                                                                                                    color: #ffffff;
+                                                                                                                                                                                                                                      opacity: 0.8;
+                                                                                                                                                                                                                                      }
 
-textarea {
-  resize: vertical;
-}
+                                                                                                                                                                                                                                      .actions {
+                                                                                                                                                                                                                                        display: flex;
+                                                                                                                                                                                                                                          flex-wrap: wrap;
+                                                                                                                                                                                                                                            gap: 10px;
+                                                                                                                                                                                                                                              align-items: center;
+                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                              .actions input { min-width: 240px; flex: 1; }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
+                                                                                                                                                                                                                                              .project-list { margin-top: 14px; display: grid; gap: 10px; }
+                                                                                                                                                                                                                                              .project-item {
+                                                                                                                                                                                                                                                width: 100%;
+                                                                                                                                                                                                                                                  border: 1px solid #e5e7eb;
+                                                                                                                                                                                                                                                    border-radius: 10px;
+                                                                                                                                                                                                                                                      padding: 12px;
+                                                                                                                                                                                                                                                        display: flex;
+                                                                                                                                                                                                                                                          justify-content: space-between;
+                                                                                                                                                                                                                                                            align-items: center;
+                                                                                                                                                                                                                                                              text-align: left;
+                                                                                                                                                                                                                                                                gap: 12px;
+                                                                                                                                                                                                                                                                  background: #ffffff;
+                                                                                                                                                                                                                                                                    color: #111827;
+                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                    .project-item-main { display: flex; flex-direction: column; gap: 2px; }
+                                                                                                                                                                                                                                                                    .project-item-main span { color: #6b7280; font-size: 0.9rem; }
 
-.actions input {
-  min-width: 240px;
-  flex: 1;
-}
+                                                                                                                                                                                                                                                                    .empty-list { margin: 0; color: #6b7280; }
+                                                                                                                                                                                                                                                                    .loading { margin-top: 12px; font-size: 0.9rem; color: #2563eb; }
+                                                                                                                                                                                                                                                                    .status-area { margin-top: 20px; color: #1f2937; }
+                                                                                                                                                                                                                                                                    .status-area .error { color: #dc2626; margin-top: 6px; }
 
-button {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #2563eb;
-  color: #ffffff;
-}
+                                                                                                                                                                                                                                                                    /* ===== 가사 영상 전체화면 미리보기 ===== */
+                                                                                                                                                                                                                                                                    .video-preview {
+                                                                                                                                                                                                                                                                      position: fixed;
+                                                                                                                                                                                                                                                                        inset: 0;
+                                                                                                                                                                                                                                                                          display: flex;
+                                                                                                                                                                                                                                                                            flex-direction: column;
+                                                                                                                                                                                                                                                                              align-items: center;
+                                                                                                                                                                                                                                                                                justify-content: center;
+                                                                                                                                                                                                                                                                                  cursor: pointer;
+                                                                                                                                                                                                                                                                                    z-index: 1000;
+                                                                                                                                                                                                                                                                                      transition: background-color 0.3s;
+                                                                                                                                                                                                                                                                                      }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
+                                                                                                                                                                                                                                                                                      .lyrics-display {
+                                                                                                                                                                                                                                                                                        display: flex;
+                                                                                                                                                                                                                                                                                          flex-direction: column;
+                                                                                                                                                                                                                                                                                            align-items: center;
+                                                                                                                                                                                                                                                                                              justify-content: center;
+                                                                                                                                                                                                                                                                                                gap: 28px;
+                                                                                                                                                                                                                                                                                                  padding: 40px;
+                                                                                                                                                                                                                                                                                                    text-align: center;
+                                                                                                                                                                                                                                                                                                      flex: 1;
+                                                                                                                                                                                                                                                                                                        width: 100%;
+                                                                                                                                                                                                                                                                                                        }
 
-.loading {
-  margin-top: 12px;
-  font-size: 0.9rem;
-  color: #2563eb;
-}
+                                                                                                                                                                                                                                                                                                        .lyrics-line {
+                                                                                                                                                                                                                                                                                                          margin: 0;
+                                                                                                                                                                                                                                                                                                            font-weight: 800;
+                                                                                                                                                                                                                                                                                                              letter-spacing: 0.03em;
+                                                                                                                                                                                                                                                                                                                word-break: keep-all;
+                                                                                                                                                                                                                                                                                                                  line-height: 1.3;
+                                                                                                                                                                                                                                                                                                                    transition: all 0.4s ease;
+                                                                                                                                                                                                                                                                                                                      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+                                                                                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                                                                                      .lyrics-line.prev,
+                                                                                                                                                                                                                                                                                                                      .lyrics-line.next {
+                                                                                                                                                                                                                                                                                                                        opacity: 0.3;
+                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                        .lyrics-line.current {
+                                                                                                                                                                                                                                                                                                                          opacity: 1;
+                                                                                                                                                                                                                                                                                                                            transform: scale(1.03);
+                                                                                                                                                                                                                                                                                                                            }
 
-.project-list {
-  margin-top: 14px;
-  display: grid;
-  gap: 10px;
-}
+                                                                                                                                                                                                                                                                                                                            .preview-controls {
+                                                                                                                                                                                                                                                                                                                              position: absolute;
+                                                                                                                                                                                                                                                                                                                                bottom: 0;
+                                                                                                                                                                                                                                                                                                                                  left: 0;
+                                                                                                                                                                                                                                                                                                                                    right: 0;
+                                                                                                                                                                                                                                                                                                                                      padding: 16px 32px 28px;
+                                                                                                                                                                                                                                                                                                                                        background: linear-gradient(transparent, rgba(0,0,0,0.85));
+                                                                                                                                                                                                                                                                                                                                          display: flex;
+                                                                                                                                                                                                                                                                                                                                            flex-direction: column;
+                                                                                                                                                                                                                                                                                                                                              gap: 10px;
+                                                                                                                                                                                                                                                                                                                                              }
 
-.project-item {
-  width: 100%;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: left;
-  gap: 12px;
-  background: #ffffff;
-  color: #111827;
-}
+                                                                                                                                                                                                                                                                                                                                              .preview-info {
+                                                                                                                                                                                                                                                                                                                                                display: flex;
+                                                                                                                                                                                                                                                                                                                                                  gap: 12px;
+                                                                                                                                                                                                                                                                                                                                                    align-items: baseline;
+                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                    .preview-title {
+                                                                                                                                                                                                                                                                                                                                                      color: #ffffff;
+                                                                                                                                                                                                                                                                                                                                                        font-weight: 700;
+                                                                                                                                                                                                                                                                                                                                                          font-size: 1rem;
+                                                                                                                                                                                                                                                                                                                                                          }
+                                                                                                                                                                                                                                                                                                                                                          .preview-artist {
+                                                                                                                                                                                                                                                                                                                                                            color: rgba(255,255,255,0.6);
+                                                                                                                                                                                                                                                                                                                                                              font-size: 0.9rem;
+                                                                                                                                                                                                                                                                                                                                                              }
 
-.project-item-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+                                                                                                                                                                                                                                                                                                                                                              .preview-progress {
+                                                                                                                                                                                                                                                                                                                                                                display: flex;
+                                                                                                                                                                                                                                                                                                                                                                  align-items: center;
+                                                                                                                                                                                                                                                                                                                                                                    gap: 10px;
+                                                                                                                                                                                                                                                                                                                                                                      color: rgba(255,255,255,0.7);
+                                                                                                                                                                                                                                                                                                                                                                        font-size: 0.8rem;
+                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                        .progress-bar {
+                                                                                                                                                                                                                                                                                                                                                                          flex: 1;
+                                                                                                                                                                                                                                                                                                                                                                            height: 4px;
+                                                                                                                                                                                                                                                                                                                                                                              border: none;
+                                                                                                                                                                                                                                                                                                                                                                                background: transparent;
+                                                                                                                                                                                                                                                                                                                                                                                  padding: 0;
+                                                                                                                                                                                                                                                                                                                                                                                    border-radius: 0;
+                                                                                                                                                                                                                                                                                                                                                                                      cursor: pointer;
+                                                                                                                                                                                                                                                                                                                                                                                        accent-color: #ffffff;
+                                                                                                                                                                                                                                                                                                                                                                                        }
 
-.project-item-main span {
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.empty-list {
-  margin: 0;
-  color: #6b7280;
-}
-
-.status-area {
-  margin-top: 20px;
-  color: #1f2937;
-}
-
-.status-area .error {
-  color: #dc2626;
-  margin-top: 6px;
+                                                                                                                                                                                                                                                                                                                                                                                        .preview-buttons {
+                                                                                                                                                                                                                                                                                                                                                                                          display: flex;
+                                                                                                                                                                                                                                                                                                                                                                                            gap: 10px;
+                                                                                                                                                                                                                                                                                                                                                                                            }
 }
