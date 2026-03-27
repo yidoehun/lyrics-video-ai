@@ -14,6 +14,19 @@ function createInitialProject(): LyricsVideoProject {
   return { ...defaultProject };
 }
 
+function formatUpdatedAt(value?: string): string {
+  if (!value) {
+    return "-";
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  return parsed.toLocaleString();
+}
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -292,7 +305,7 @@ export default function App() {
                   <strong>{item.title || "제목 없음"}</strong>
                   <span>{item.artist || "아티스트 없음"}</span>
                 </div>
-                <small>{item.updatedAt ? new Date(item.updatedAt).toLocaleString() : "-"}</small>
+                <small>{formatUpdatedAt(item.updatedAt)}</small>
               </button>
             ))
           )}

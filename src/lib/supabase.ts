@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { LyricsVideoProject } from "../types/project";
 
 const SUPABASE_URL =
@@ -7,7 +7,8 @@ const SUPABASE_ANON_KEY =
   import.meta.env.VITE_SUPABASE_ANON_KEY ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGVzZ2ZjZ2ZncXVheHpibnlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDEwNTYsImV4cCI6MjA4ODExNzA1Nn0.o6Mx6-hz60Bn91IUBhx6Hue9qsoej6KFvAk8UhpO5yo";
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase: SupabaseClient | null =
+  SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 const TABLE_NAME = "lyrics_projects";
 
@@ -34,7 +35,15 @@ function mapRowToProject(row: ProjectRow): LyricsVideoProject {
   };
 }
 
+function getClientOrThrow(): SupabaseClient {
+  if (!supabase) {
+    throw new Error("Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+  }
+  return supabase;
+}
+
 export async function saveProject(project: LyricsVideoProject): Promise<LyricsVideoProject> {
+  const client = getClientOrThrow();
   const payload: {
     id?: string;
     title: string;
@@ -51,7 +60,7 @@ export async function saveProject(project: LyricsVideoProject): Promise<LyricsVi
     payload.id = project.id;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from(TABLE_NAME)
     .upsert(payload, { onConflict: "id" })
     .select("id,title,artist,lyrics,audio_file_name,created_at,updated_at")
@@ -65,7 +74,8 @@ export async function saveProject(project: LyricsVideoProject): Promise<LyricsVi
 }
 
 export async function getProjectById(id: string): Promise<LyricsVideoProject> {
-  const { data, error } = await supabase
+  const client = getClientOrThrow();
+  const { data, error } = await client
     .from(TABLE_NAME)
     .select("id,title,artist,lyrics,audio_file_name,created_at,updated_at")
     .eq("id", id)
@@ -79,7 +89,8 @@ export async function getProjectById(id: string): Promise<LyricsVideoProject> {
 }
 
 export async function getProjects(): Promise<LyricsVideoProject[]> {
-  const { data, error } = await supabase
+  const client = getClientOrThrow();
+  const { data, error } = await client
     .from(TABLE_NAME)
     .select("id,title,artist,lyrics,audio_file_name,created_at,updated_at")
     .order("updated_at", { ascending: false });
