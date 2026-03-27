@@ -248,4 +248,62 @@ button:disabled {
 .status-area .error {
   color: #dc2626;
   margin-top: 6px;
+
+  /* ===== MP3 Trim Editor ===== */
+  .trim-info {
+      margin-bottom: 8px;
+      color: #6b7280;
+      font-size: 0.9rem;
+  }
+
+  .trim-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+  }
+
+  .trim-controls label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.9rem;
+      color: #374151;
+  }
+
+  .trim-controls label strong {
+      color: #111827;
+      font-size: 1rem;
+  }
+
+  .trim-preview-bar {
+      position: relative;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      margin: 8px 0;
+      overflow: hidden;
+  }
+
+  .trim-selected {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      background: #6366f1;
+      border-radius: 4px;
+      transition: left 0.1s, width 0.1s;
+  }
+
+  .trim-range-label {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin: 4px 0 12px;
+  }
+
+  .actions audio {
+      height: 36px;
+      border-radius: 8px;
+      background: transparent;
+      min-width: 0;
+  }
 }
