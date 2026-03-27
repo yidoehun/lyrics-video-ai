@@ -1,74 +1,51 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const GENIUS_TOKEN = process.env.GENIUS_ACCESS_TOKEN;
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 
-interface GeniusHit {
-  result?: {
-      title?: string;
-          primary_artist?: { name?: string };
-              url?: string;
-                };
-                }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
 
-                interface GeniusSearchResponse {
-                  response?: {
-                      hits?: GeniusHit[];
-                        };
-                        }
+  const { title = "", artist = "" } = req.query as { title?: string; artist?: string };
 
-                        function generatePlaceholderLyrics(title: string, artist: string): string {
-                          return `[${artist} - ${title}]\n\n가사를 여기에 입력하세요\n\n각 줄이 하나의 가사 라인입니다\n\n음악에 맞춰 자동으로 싱크됩니다\n\n줄을 나눠서 입력해 주세요\n\n빈 줄은 자동으로 제외됩니다`;
-                          }
+  if (!title && !artist) {
+    return res.status(400).json({ error: "title or artist required" });
+  }
 
-                          export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
-                            if (req.method !== "POST") {
-                                res.status(405).json({ error: "Method not allowed" });
-                                    return;
-                                      }
+  try {
+    // Genius API로 검색
+    const GENIUS_TOKEN = process.env.GENIUS_ACCESS_TOKEN;
+    const query = encodeURIComponent(`${artist} ${title}`.trim());
 
-                                        const body = req.body as { title?: string; artist?: string };
-                                          const title = body?.title?.trim();
-                                            const artist = body?.artist?.trim();
+    if (GENIUS_TOKEN) {
+      const searchRes = await fetch(
+        `https://api.genius.com/search?q=${query}`,
+        { headers: { Authorization: `Bearer ${GENIUS_TOKEN}` } }
+      );
+      const searchData = await searchRes.json();
+      const hit = searchData?.response?.hits?.[0]?.result;
 
-                                              if (!title) {
-                                                  res.status(400).json({ error: "title is required" });
-                                                      return;
-                                                        }
+      if (hit) {
+        return res.status(200).json({
+          lyrics: null,
+          title: hit.title,
+          artist: hit.primary_artist?.name,
+          geniusUrl: hit.url,
+          source: "genius",
+          message: "가사 URL을 찾았습니다. 직접 가사를 붙여넣어 주세요.",
+        });
+      }
+    }
 
-                                                          if (!GENIUS_TOKEN) {
-                                                              const dummyLyrics = generatePlaceholderLyrics(title, artist ?? "");
-                                                                  res.status(200).json({ lyrics: dummyLyrics, source: "placeholder" });
-                                                                      return;
-                                                                        }
-
-                                                                          try {
-                                                                              const query = encodeURIComponent(`${title} ${artist ?? ""}`.trim());
-                                                                                  const searchRes = await fetch(
-                                                                                        `https://api.genius.com/search?q=${query}`,
-                                                                                              { headers: { Authorization: `Bearer ${GENIUS_TOKEN}` } }
-                                                                                                  );
-
-                                                                                                      if (!searchRes.ok) {
-                                                                                                            throw new Error(`Genius search failed: ${searchRes.status}`);
-                                                                                                                }
-
-                                                                                                                    const searchData = (await searchRes.json()) as GeniusSearchResponse;
-                                                                                                                        const hit = searchData?.response?.hits?.[0];
-
-                                                                                                                            if (!hit?.result?.url) {
-                                                                                                                                  const placeholder = generatePlaceholderLyrics(title, artist ?? "");
-                                                                                                                                        res.status(200).json({ lyrics: placeholder, source: "placeholder" });
-                                                                                                                                              return;
-                                                                                                                                                  }
-
-                                                                                                                                                      const placeholder = generatePlaceholderLyrics(title, artist ?? "");
-                                                                                                                                                          res.status(200).json({
-                                                                                                                                                                lyrics: placeholder,
-                                                                                                                                                                      geniusUrl: hit.result.url,
-                                                                                                                                                                            source: "genius_url",
-                                                                                                                                                                                });
-                                                                                                                                                                                  } catch (err) {
-                                                                                                                                                                                      const message = err instanceof Error ? err.message : "Unknown error";
-                                                                                                                                                                                          res.status(500).json({ error: message });
-                                                                                                                                                                                            }
-                                                                                                                                                                                            }
+    // Genius 토큰 없거나 결과 없으면 빈 응답
+    return res.status(200).json({
+      lyrics: null,
+      message: "가사를 자동으로 가져올 수 없습니다. 직접 가사를 붙여넣어 주세요.",
+    });
+  } catch (err) {
+    console.error("lyrics-search error:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
