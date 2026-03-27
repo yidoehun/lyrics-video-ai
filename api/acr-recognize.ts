@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import crypto from "node:crypto";
-import { Blob } from "node:buffer";
 
 const ACR_ACCESS_KEY = process.env.ACR_ACCESS_KEY;
 const ACR_ACCESS_SECRET = process.env.ACR_ACCESS_SECRET;
@@ -86,7 +85,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const signature = buildSignature(timestamp);
 
     const form = new FormData();
-    form.append("sample", new Blob([audioBuffer], { type: "audio/mpeg" }), "sample.mp3");
+    const sampleFile = new File([audioBuffer], "sample.mp3", { type: "audio/mpeg" });
+    form.append("sample", sampleFile);
     form.append("access_key", ACR_ACCESS_KEY);
     form.append("sample_bytes", audioBuffer.byteLength.toString());
     form.append("timestamp", timestamp);
