@@ -16,6 +16,31 @@ type MatchInfo = {
   artists?: Array<{ name?: string }>;
 };
 
+const normalizeHost = (host: string): string => host.replace(/^https?:\/\//i, "").replace(/\/+$/g, "");
+
+const extractAudioBase64 = (body: unknown): string | null => {
+  let parsedBody: unknown = body;
+
+  if (typeof parsedBody === "string") {
+    try {
+      parsedBody = JSON.parse(parsedBody);
+    } catch {
+      return null;
+    }
+  }
+
+  if (!parsedBody || typeof parsedBody !== "object") {
+    return null;
+  }
+
+  const { audioBase64 } = parsedBody as { audioBase64?: unknown };
+  if (typeof audioBase64 !== "string" || !audioBase64.trim()) {
+    return null;
+  }
+
+  return audioBase64;
+};
+
 const buildSignature = (timestamp: string): string => {
   if (!ACR_ACCESS_SECRET || !ACR_ACCESS_KEY) {
     throw new Error("ACR credentials are missing.");
@@ -64,18 +89,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   try {
-    if (!req.body || typeof req.body !== "object" || !("audioBase64" in req.body)) {
+    const audioBase64 = extractAudioBase64(req.body);
+    if (!audioBase64) {
       res.status(400).json({ error: "audioBase64 is required." });
       return;
     }
 
-    const body = req.body as { audioBase64?: string };
-    if (!body.audioBase64) {
-      res.status(400).json({ error: "audioBase64 is required." });
-      return;
-    }
-
-    const audioBuffer = Buffer.from(body.audioBase64, "base64");
+    const audioBuffer = Buffer.from(audioBase64, "base64");
     if (!audioBuffer.length) {
       res.status(400).json({ error: "Invalid audio payload." });
       return;
@@ -85,8 +105,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const signature = buildSignature(timestamp);
 
     const form = new FormData();
-    const sampleFile = new File([audioBuffer], "sample.mp3", { type: "audio/mpeg" });
-    form.append("sample", sampleFile);
+    const sampleBlob = new Blob([audioBuffer], { type: "audio/mpeg" });
+    form.append("sample", sampleBlob, "sample.mp3");
     form.append("access_key", ACR_ACCESS_KEY);
     form.append("sample_bytes", audioBuffer.byteLength.toString());
     form.append("timestamp", timestamp);
@@ -94,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     form.append("data_type", DATA_TYPE);
     form.append("signature_version", SIGNATURE_VERSION);
 
-    const response = await fetch(`https://${ACR_HOST}${HTTP_URI}`, {
+    const response = await fetch(`https://${normalizeHost(ACR_HOST)}${HTTP_URI}`, {
       method: "POST",
       body: form,
     });

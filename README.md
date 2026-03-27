@@ -23,6 +23,9 @@ npm run dev
 - `ACR_ACCESS_KEY`
 - `ACR_ACCESS_SECRET`
 
+> 배포 시 `ACR_HOST`는 `identify-xxx.acrcloud.com` 또는 `https://identify-xxx.acrcloud.com` 형식 모두 사용 가능합니다.
+> Vercel Project Settings > Environment Variables에 동일한 값을 등록해야 `/api/acr-recognize`가 정상 동작합니다.
+
 ## 추가된 기능
 
 1. **MP3 업로드 + 자동 곡 인식**
